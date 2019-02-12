@@ -1,0 +1,16 @@
+<h1>About to Meadowlark Travel</h1>
+
+<button id="home">回到首页</button>
+
+<p>Your funtune for the day:</p>
+<blockquote>{{fortune}}</blockquote>
+
+<script type="text/javascript">
+  var domBtn = document
+    .getElementById("home")
+    .addEventListener("click", function () {
+      console.log("点击啦");
+      window.history.pushState(null, null, "/");
+      window.history.go();
+    });
+</script>

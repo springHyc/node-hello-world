@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>首页</title>
+  </head>
+  <body>
+    <div>首页啦啦啦</div>
+    <button id="about">关于我们</button>
+    <script type="text/javascript">
+      document.getElementById("about").addEventListener("click", function() {
+        window.history.pushState(null, "about page", "/about"); // 只改变history中的值
+        window.history.go(); // 刷新页面
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+<h1>Welcome to Meadowlark Travel</h1>
+<button id="about">go to about page</button>
+<script type="text/javascript">
+  document.getElementById("about").addEventListener("click", function () {
+    window.history.pushState(null, "about page", "/about"); // 只改变history中的值
+    window.history.go(); // 刷新页面
+  });
+</script>
