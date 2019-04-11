@@ -1,5 +1,6 @@
 var express = require("express");
 var fortune = require("./lib/fortunes.js");
+var formidable = require("formidable");
 
 var weather = require("./src/partials/weather.js");
 var handlebars = require("express3-handlebars").create({
@@ -68,6 +69,28 @@ app.post("/process", (req, res) => {
 });
 app.get("/thank-you", function(req, res) {
   res.render("thank-you");
+});
+
+app.get("/contest/vacation-photo", (req, res) => {
+  var now = new Date();
+  res.render("contest/vacation-photo", {
+    year: now.getFullYear(),
+    month: now.getMonth()
+  });
+});
+
+app.post("/contest/vacation-photo/:year/:month", function(req, res) {
+  var form = new formidable.IncomingForm();
+  form.parse(req, function(err, fields, files) {
+    if (err) {
+      return res.redirect(303, "/erroe");
+    }
+    console.log("received fields:");
+    console.log(fields);
+    console.log("received files:");
+    console.log(files);
+    res.redirect(303, "/thank-you");
+  });
 });
 
 app.use(function(req, res) {
