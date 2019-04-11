@@ -21,4 +21,4 @@
 
 ## package 记录
 
-- body-parser 来解析 post 请求 URL 编码体
+- body-parser 来解析 post 请求 URL 编码

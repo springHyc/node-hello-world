@@ -3,10 +3,33 @@
 
 <head>
   <title>Meadowlark Travel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+  {{!-- <link rel="stylesheet" href="../../public/vendor/bootstrap/css/bootstrap-theme.min.css"> --}}
+  <style>
+    body {
+      padding-top: 50px;
+      padding-bottom: 20px;
+    }
+  </style>
+  <link rel="stylesheet" href="/css/main.css">
 </head>
 
 <body>
-  {{{body}}}
+  <header><img src="/img/logo.jpg" alt="Meadowlark Travel Logo"></header>
+
+  <div class="container">
+    {{{body}}}
+
+    <hr>
+
+    <footer>
+      <p>&copy; Meadowlark Travel 2014</p>
+    </footer>
+  </div>
+
+  <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="/js/main.js"></script>
 </body>
 
 </html>
