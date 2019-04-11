@@ -54,6 +54,22 @@ app.get("/newsletter", (req, res) => {
   res.render("newsletter", { csrf: "CSRF token goes here" });
 });
 
+app.post("/process", (req, res) => {
+  console.log("Form (from querystring): " + req.query.form);
+  console.log("CSRF token (from hidden from field): " + req.body._csrf);
+  console.log("姓名 (from visible form field): " + req.body.name);
+  console.log("邮箱 (from visible form field): " + req.body.email);
+  // 添加jQuery
+  if (req.xhr || req.accepts("json,html") === "json") {
+    res.send({ success: true });
+  } else {
+    res.redirect(303, "/thank-you"); // 重定向
+  }
+});
+app.get("/thank-you", function(req, res) {
+  res.render("thank-you");
+});
+
 app.use(function(req, res) {
   res.status(404).render("404");
 });

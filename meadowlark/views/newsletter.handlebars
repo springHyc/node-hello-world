@@ -1,23 +1,50 @@
-<h2>Sign up for our newsletter to receive news and specials</h2>
-<form class="form-horizontal" role="form" action="/process?from=newsletter" method="POST">
-    <input type="hidden" name="_csrf" value="{{csrf}}">
-    <div class="form-group">
-        <label for="fieldName" class="col-sm-2 control-label">姓名：</label>
-        <div class="col-sm-4">
-            <input type="text" class="form-control" id="fieldName" name="name">
+<div class="formContainer">
+    <h2>Sign up for our newsletter to receive news and specials</h2>
+    <form class="form-horizontal newsletterFrom" role="form" action="/process?form=newsletter" method="POST">
+        <input type="hidden" name="_csrf" value="{{csrf}}">
+        <div class="form-group">
+            <label for="fieldName" class="col-sm-2 control-label">姓名：</label>
+            <div class="col-sm-4">
+                <input type="text" class="form-control" id="fieldName" name="name">
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label for="fieldEmail" class="col-sm-2 control-label">邮箱：</label>
-        <div class="col-sm-4">
-            <input type="email" class="form-control" id="fieldEmail" name="email">
+        <div class="form-group">
+            <label for="fieldEmail" class="col-sm-2 control-label">邮箱：</label>
+            <div class="col-sm-4">
+                <input type="email" class="form-control" id="fieldEmail" name="email">
+            </div>
         </div>
-    </div>
 
-    <div class="form-group">
+        <div class="form-group">
 
-        <div class="col-sm-offset-2 col-sm-4">
-            <button class="btn btn-primary" type="submit">注册</button>
+            <div class="col-sm-offset-2 col-sm-4">
+                <button class="btn btn-primary" type="submit">注册</button>
+            </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
+{{#section }}
+<script>
+    $(document).ready(function () {
+        $(".newsletterFrom").on("submit", function (evt) {
+            evt.preventDefault();
+            var action = $(this).attr("action");
+            var $container = $(this).closest(".formContainer");
+            $.ajax({
+                url: action,
+                type: "POST",
+                success: function (data) {
+                    if (data.success) {
+                        $container.html("<h2>谢谢！</h2>")
+                    } else {
+                        $container.html("<h2>There was a problem.</h2>")
+                    }
+                },
+                error: function () {
+                    $container.html("There was a problem.")
+                }
+            })
+        })
+    });
+</script>
+{{/section}}
