@@ -93,6 +93,8 @@ app.post("/contest/vacation-photo/:year/:month", function(req, res) {
   });
 });
 
+//get和post都可以是有个all
+
 app.use(function(req, res) {
   res.status(404).render("404");
 });
