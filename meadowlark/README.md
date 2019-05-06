@@ -26,3 +26,14 @@
 ## todo
 
 - 添加 log4js 日志记录，试试
+
+## 添加`node-inspector`调试
+
+`node-inspector&` 后台启动 node 探查器
+然后 `node --debug index.js`
+就可以在 chrome 上调试 node 程序啦
+调试地址：`http://127.0.0.1:8080/?port=5858`
+
+## 添加 mongolab
+
+- `https://cloud.mongodb.com/v2/5ccfa15e014b760ad382c70d#clusters?fastPoll=true`
