@@ -3,6 +3,8 @@ var fortune = require("./lib/fortunes.js");
 var formidable = require("formidable");
 var fs = require("fs");
 
+var Vacation = require("./models/vacation.js"); // 引入Mongoose创建的Vacation模型对象
+
 var weather = require("./src/partials/weather.js");
 var handlebars = require("express3-handlebars").create({
   defaultLayout: "main"
@@ -12,6 +14,21 @@ app.engine("handlebars", handlebars.engine);
 app.set("view engine", "handlebars");
 
 app.set("port", process.env.PORT || 3000);
+
+// 连接数据库
+// meadowlark:数据库名称
+// root:账号
+// he123456:密码
+var mongoose = require("mongoose");
+mongoose.connect(
+  "mongodb+srv://root:he123456@node-db-sfoe4.mongodb.net/meadowlark?retryWrites=true",
+  {
+    server: { socketOptions: { keepAlive: 1 } },
+    useNewUrlParser: true
+  }
+);
+
+// 连接数据库
 
 // 设置的路径
 app.use(express.static(__dirname + "/public"));
@@ -132,6 +149,24 @@ app.post("/contest/vacation-photo/:year/:month", function(req, res) {
   });
 });
 
+app.get("/vacations", (req, res) => {
+  // 只会展示2条数据
+  Vacation.find({ available: true }, (err, vacations) => {
+    var context = {
+      vacations: vacations.map(vacation => {
+        return {
+          sku: vacation.sku,
+          name: vacation.name,
+          description: vacation.description,
+          price: vacation.getDisplayPrice(),
+          inSeason: vacation.inSeason
+        };
+      })
+    };
+    res.render("vacations", context);
+  });
+});
+
 //get和post都可以是有个all
 
 app.use(function(req, res) {
@@ -141,6 +176,64 @@ app.use(function(req, res) {
 app.use(function(err, req, res, next) {
   console.error(err.stack);
   res.status(500).render("500");
+});
+
+// initialize vacations
+Vacation.find(function(err, vacations) {
+  if (vacations.length) return;
+
+  new Vacation({
+    name: "Hood River Day Trip",
+    slug: "hood-river-day-trip",
+    category: "Day Trip",
+    sku: "HR199",
+    description:
+      "Spend a day sailing on the Columbia and " +
+      "enjoying craft beers in Hood River!",
+    priceInCents: 9995,
+    tags: ["day trip", "hood river", "sailing", "windsurfing", "breweries"],
+    inSeason: true,
+    maximumGuests: 16,
+    available: true,
+    packagesSold: 0
+  }).save();
+
+  new Vacation({
+    name: "Oregon Coast Getaway",
+    slug: "oregon-coast-getaway",
+    category: "Weekend Getaway",
+    sku: "OC39",
+    description: "Enjoy the ocean air and quaint coastal towns!",
+    priceInCents: 269995,
+    tags: ["weekend getaway", "oregon coast", "beachcombing"],
+    inSeason: false,
+    maximumGuests: 8,
+    available: true,
+    packagesSold: 0
+  }).save();
+
+  new Vacation({
+    name: "Rock Climbing in Bend",
+    slug: "rock-climbing-in-bend",
+    category: "Adventure",
+    sku: "B99",
+    description: "Experience the thrill of rock climbing in the high desert.",
+    priceInCents: 289995,
+    tags: [
+      "weekend getaway",
+      "bend",
+      "high desert",
+      "rock climbing",
+      "hiking",
+      "skiing"
+    ],
+    inSeason: true,
+    requiresWaiver: true,
+    maximumGuests: 4,
+    available: false,
+    packagesSold: 0,
+    notes: "The tour guide is currently recovering from a skiing accident."
+  }).save();
 });
 
 app.listen(app.get("port"), function() {
