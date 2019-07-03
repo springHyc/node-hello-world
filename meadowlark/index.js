@@ -15,7 +15,7 @@ var app = express();
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 
-app.set('port', process.env.PORT || 3000);
+app.set('port', process.env.PORT || 4321);
 initVacations.init();
 
 // 连接数据库
@@ -24,6 +24,12 @@ initVacations.init();
 // he123456:密码
 var mongoose = require('mongoose');
 var MongoSessionStore = require('session-mongoose')(require('connect'));
+// var sessionStore = new MongoSessionStore({
+//     url:
+//         'mongodb+srv://root:he123456@node-db-sfoe4.mongodb.net/meadowlark?retryWrites=true'
+// });
+// app.use(require('cookie-parse')(true)); //todo ?
+// app.use(require('express-session')({ store: sessionStore }));
 mongoose.connect(
     'mongodb+srv://root:he123456@node-db-sfoe4.mongodb.net/meadowlark?retryWrites=true',
     {
@@ -154,20 +160,64 @@ app.post('/contest/vacation-photo/:year/:month', function(req, res) {
     });
 });
 
+function converFromUSD(value, currency) {
+    switch (currency) {
+        case 'USD':
+            return value * 1;
+        case 'GBP':
+            return value * 0.6;
+        case 'BTC':
+            return value * 0.0023707918444761;
+        default:
+            return NaN;
+    }
+}
+
+app.get('/set-currency/:currency', (req, res) => {
+    req.session.currency = req.params.currency;
+    return res.redirect(303, '/vacations');
+});
+
+app.get('/hehe/vacations', (req, res) => {
+    Vacation.find({ available: false }, (err, vacations) => {
+        res.send(JSON.stringify(vacations));
+    });
+});
+
 app.get('/vacations', (req, res) => {
     // 只会展示2条数据
-    Vacation.find({ available: true }, (err, vacations) => {
+    Vacation.find({ available: false }, (err, vacations) => {
+        var currency = (req.session && req.session.currency) || 'USD';
         var context = {
+            currency: currency,
             vacations: vacations.map(vacation => {
                 return {
                     sku: vacation.sku,
                     name: vacation.name,
                     description: vacation.description,
-                    price: vacation.getDisplayPrice(),
-                    inSeason: vacation.inSeason
+                    // price: vacation.getDisplayPrice(),
+                    price: converFromUSD(
+                        vacation.priiceInCents / 100,
+                        currency
+                    ),
+                    inSeason: vacation.inSeason,
+                    qty: vacation.qty
                 };
             })
         };
+        switch (currency) {
+            case 'USD':
+                context.currencyUSD = 'selected';
+                break;
+            case 'GBP':
+                context.currencyGBP = 'selected';
+                break;
+            case 'BTC':
+                context.currencyBTC = 'selected';
+                break;
+            default:
+                return NaN;
+        }
         res.render('vacations', context);
     });
 });
