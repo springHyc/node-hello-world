@@ -67,25 +67,20 @@ app.get('/viewPoints', (req, res) => {
 
 // 获取图片
 app.get('/viewPoint/pohots/:id', (req, res) => {
-    // Photo.find({}, (err, pohots) => {
-    //     res.send(JSON.stringify(viewPoints));
-    //     pohots.map(item => {
-    //         res.write(photo.data, 'binary');
-    //     });
-    //     res.end();
-    // });
-    // Photo.findById(req.params.id, (err, photo) => {
-    //     res.send(`data:image/jpeg;base64,${photo.data.toString('base64')}`);
-    // });
-    let dataList = [];
-    Photo.find((err, data) => {
-        data.map(photo => {
-            dataList.push(
-                `data:image/jpeg;base64,${photo.data.toString('base64')}`
-            );
-        });
-        res.send(dataList);
+    // 获取单张照片
+    Photo.findById(req.params.id, (err, photo) => {
+        res.send(`data:image/jpeg;base64,${photo.data.toString('base64')}`);
     });
+    // 获取所有的图片
+    // let dataList = [];
+    // Photo.find((err, data) => {
+    //     data.map(photo => {
+    //         dataList.push(
+    //             `data:image/jpeg;base64,${photo.data.toString('base64')}`
+    //         );
+    //     });
+    //     res.send(dataList);
+    // });
 });
 
 app.post('/viewPoint', (req, res) => {
@@ -121,14 +116,39 @@ app.post('/viewPoint/photo/upload', multipartMiddleware, (req, res) => {
     if (!(req.files && req.files.file && req.files.file.path)) {
         return;
     }
+    if (req.query.id == 'undefined') {
+        res.status(400).send({ message: '没有ID不能存储' });
+        return;
+    }
+
     fs.readFile(req.files.file.path, (err, data) => {
         if (err) throw err;
+        var viewPointId = req.query.id;
         new Photo({ data, viewPointId: req.query.id }).save().then(
             photo => {
-                res.write(photo.data, 'binary');
-                res.end();
+                // res.write(photo.data, 'binary'); // 将二进制图片返回
+                res.status(200).send({ id: photo.id, message: '保存成功！' });
+                ViewPoint.findById(viewPointId, (err, viewPoint) => {
+                    const _imgIds = viewPoint.imgIds || [];
+                    _imgIds.push(photo.id);
+                    ViewPoint.findByIdAndUpdate(viewPointId, {
+                        imgIds: _imgIds
+                    }).then(
+                        () => {
+                            console.log(
+                                '将photo.id插入 ViewPoint表中的imgIds字段success!'
+                            );
+                        },
+                        () =>
+                            console.log(
+                                '将photo.id插入 ViewPoint表中的imgIds字段failure!'
+                            )
+                    );
+                });
             },
-            () => console.log('保存失败！')
+            () => {
+                res.status(500).end();
+            }
         );
     });
 });
