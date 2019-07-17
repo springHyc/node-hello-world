@@ -101,7 +101,11 @@ app.delete('/api/viewPoint/photo/:id', (req, res) => {
         ViewPoint.findByIdAndUpdate(req.params.id, { imgIds: newImgUrls }).then(
             () => {
                 console.log('delete url is success');
-                res.status(200).send({ message: '删除成功！' });
+                let path = `${__dirname}/public${req.query.url}`;
+                fs.unlink(path, err => {
+                    if (err) throw err;
+                    res.status(200).send({ message: '删除成功！' });
+                });
             },
             () => {
                 console.log('delete url is failure');
