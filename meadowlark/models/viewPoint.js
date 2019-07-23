@@ -7,7 +7,7 @@ const viewPointSchema = mongoose.Schema({
     transportation: String,
     partner: String,
     isGo: Boolean,
-    whenDid: String,
+    whenDid: [String],
     imgIds: [String]
 });
 
