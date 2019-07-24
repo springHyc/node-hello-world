@@ -2,6 +2,10 @@
 
 学习《node 与 express 开发》时的 code
 
+## 记录
+
+`path.join(__dirname, ""../)` // 获取上一级目录
+
 ## 添加 nodemon
 
 一个监控工具，在它发现`JavaScript`被修改后会自动重启服务器。
