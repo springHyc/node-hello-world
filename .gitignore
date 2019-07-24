@@ -3,3 +3,4 @@ node_modules/
 .vscode
 public/.DS_Store
 meadowlark/node_modules/
+blog/node_modules/
