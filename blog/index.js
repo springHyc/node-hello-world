@@ -20,7 +20,8 @@ mongoose.connect(
     'mongodb+srv://root:he123456@node-db-sfoe4.mongodb.net/meadowlark?retryWrites=true',
     {
         server: { socketOptions: { keepAlive: 1 } },
-        useNewUrlParser: true
+        useNewUrlParser: true,
+        useFindAndModify: true
     }
 );
 
@@ -92,10 +93,10 @@ app.delete('/api/viewPoint/photo/:id', (req, res) => {
         const newImgUrls = _imgIds.filter(item => item != req.query.url);
         ViewPoint.findByIdAndUpdate(req.params.id, { imgIds: newImgUrls }).then(
             () => {
-                console.log('delete url is success');
                 let path = `${__dirname}/public${req.query.url}`;
                 fs.unlink(path, err => {
                     if (err) throw err;
+                    console.log('delete url is success');
                     res.status(200).send({ message: '删除成功！' });
                 });
             },
@@ -132,12 +133,12 @@ app.post('/api/viewPoint/photo/upload', multipartMiddleware, (req, res) => {
                 }).then(
                     () => {
                         console.log(
-                            '将photo.url插入 ViewPoint表中的imgIds字段success!'
+                            `将${uri}插入 ViewPoint表中的imgIds字段success!`
                         );
                     },
                     () =>
                         console.log(
-                            '将photo.url插入 ViewPoint表中的imgIds字段failure!'
+                            `将${uri}插入 ViewPoint表中的imgIds字段failure!`
                         )
                 );
             });
