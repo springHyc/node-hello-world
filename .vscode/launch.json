@@ -7,12 +7,6 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "ne-server",
-            "program": "${workspaceFolder}/blog/ne-server.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
             "name": "blog-server",
             "program": "${workspaceFolder}/blog/index.js"
         },
