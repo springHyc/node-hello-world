@@ -4,6 +4,9 @@
 
 ## 记录
 
+-   blog 是一个单独的项目:博客服务端
+-   meadowlark 是一个单独的学习`node-express`学习时的 code
+
 `path.join(__dirname, ""../)` // 获取上一级目录
 
 ## 添加 nodemon
