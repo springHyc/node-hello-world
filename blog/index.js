@@ -146,6 +146,13 @@ app.post('/api/viewPoint/photo/upload', multipartMiddleware, (req, res) => {
     });
 });
 
+app.get('/api/viewPoint/photp/:id', (req, res) => {
+    ViewPoint.findById(req.params.id, (err, data) => {
+        console.log(data.imgIds);
+        res.send(JSON.stringify(data.imgIds));
+    });
+});
+
 app.listen(app.get('port'), function() {
     console.log(
         `Express started on http://localhost:${app.get(
