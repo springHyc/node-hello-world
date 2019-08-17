@@ -146,7 +146,7 @@ app.post('/api/viewPoint/photo/upload', multipartMiddleware, (req, res) => {
     });
 });
 
-app.get('/api/viewPoint/photp/:id', (req, res) => {
+app.get('/api/viewPoint/photo/:id', (req, res) => {
     ViewPoint.findById(req.params.id, (err, data) => {
         console.log(data.imgIds);
         res.send(JSON.stringify(data.imgIds));
