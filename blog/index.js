@@ -17,8 +17,8 @@ app.set('port', process.env.PORT || 4321);
 var mongoose = require('mongoose');
 var MongoSessionStore = require('session-mongoose')(require('connect'));
 mongoose.connect(
-    'mongodb+srv://root:he123456@node-db-sfoe4.mongodb.net/meadowlark?retryWrites=true',
-    // 'mongodb://127.0.0.1/meadowlark?retryWrites=true',
+    // 'mongodb+srv://root:he123456@node-db-sfoe4.mongodb.net/meadowlark?retryWrites=true',
+    'mongodb://127.0.0.1/meadowlark?retryWrites=true',
     {
         server: { socketOptions: { keepAlive: 1 } },
         useNewUrlParser: true,
