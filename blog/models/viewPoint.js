@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const viewPointSchema = mongoose.Schema({
     title: String,
     id: Number,
-    bestTime: String,
+    createdTime: Date,
+    bestTime: [String],
     transportation: String,
     partner: String,
     isGo: Boolean,

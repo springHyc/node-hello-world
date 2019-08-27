@@ -4,6 +4,7 @@ var multipart = require('connect-multiparty');
 var multipartMiddleware = multipart();
 var fs = require('fs');
 var ViewPoint = require('./models/viewPoint');
+var ImgInfo = require('./models/imgInfo');
 var initViewPoint = require('./lib/initViewPoint');
 
 const mineType = require('mime-types');
@@ -56,20 +57,22 @@ app.get('/api/about.do', (req, res, next) => {
 app.get('/api/viewPoints', (req, res) => {
     ViewPoint.find({}, (err, viewPoints) => {
         res.send(JSON.stringify(viewPoints));
-    });
+    }).sort({ createdTime: 'desc' });
 });
 
 app.post('/api/viewPoint', (req, res) => {
     if (req.body.data._id) {
         // update
-        ViewPoint.findByIdAndUpdate(req.body.data._id, req.body.data).then(
-            viewPoint => {
-                res.send(JSON.stringify(viewPoint));
-            }
-        );
+        const data = req.body.data;
+        data.createdTime = new Date().valueOf();
+        ViewPoint.findByIdAndUpdate(req.body.data._id, data).then(viewPoint => {
+            res.send(JSON.stringify(viewPoint));
+        });
     } else {
         // create
-        new ViewPoint(req.body.data).save().then(
+        const data = req.body.data;
+        data.createdTime = new Date().valueOf();
+        new ViewPoint(data).save().then(
             viewPoint => {
                 console.log('保存成功！\n', viewPoint);
                 res.send(JSON.stringify(viewPoint));
@@ -147,11 +150,59 @@ app.post('/api/viewPoint/photo/upload', multipartMiddleware, (req, res) => {
     });
 });
 
+// 添加获取照片墙的地址
 app.get('/api/viewPoint/photo/:id', (req, res) => {
+    let imgInfos = [];
     ViewPoint.findById(req.params.id, (err, data) => {
-        console.log(data.imgIds);
-        res.send(JSON.stringify(data.imgIds));
+        const urls = data.imgIds;
+        let imgInfo = {};
+        let promises = urls.map(url => {
+            return new Promise(function(resolve, reject) {
+                ImgInfo.find({ url }, (err, res) => {
+                    if (res.length == 0) {
+                        imgInfo = {
+                            url: url,
+                            title: '',
+                            desc: '',
+                            filename: '',
+                            createdTime: ''
+                        };
+                    } else {
+                        imgInfo = res[0];
+                    }
+                    resolve(imgInfo);
+                });
+            });
+        });
+        Promise.all(promises).then(values => {
+            res.send({
+                message: '获取照片墙照片地址成功！',
+                imgInfos: values,
+                urls: data.imgIds
+            });
+        });
     });
+});
+
+// 保存图片信息
+app.post('/api/imgInfos/save', (req, res) => {
+    if (req.body.data._id) {
+        // update
+        const data = req.body.data;
+        ImgInfo.findByIdAndUpdate(req.body.data._id, data).then(data => {
+            res.send(JSON.stringify(data));
+        });
+    } else {
+        // create
+        const data = req.body.data;
+        data.createdTime = new Date().valueOf();
+        new ImgInfo(data).save().then(
+            data => {
+                res.send(JSON.stringify(data));
+            },
+            () => console.log('保存失败！')
+        );
+    }
 });
 
 app.listen(app.get('port'), function() {
