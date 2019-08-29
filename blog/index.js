@@ -205,6 +205,34 @@ app.post('/api/imgInfos/save', (req, res) => {
     }
 });
 
+app.get('/api/imgInfos/getImgInfo', (req, res) => {
+    ImgInfo.find({ url: req.query.url }, (err, data) => {
+        if (err) {
+            res.send({
+                message: err,
+                code: 500
+            });
+        } else {
+            let imgInfo = {};
+            if (data && data.length > 0) {
+                imgInfo = {
+                    createdTime: data[0].createdTime,
+                    desc: data[0].desc,
+                    id: data[0].id,
+                    title: data[0].title,
+                    url: data[0].url,
+                    viewPointId: data[0].viewPointId
+                };
+            }
+            res.send({
+                message: '获取图片信息成功！',
+                code: 200,
+                imgInfo
+            });
+        }
+    });
+});
+
 app.listen(app.get('port'), function() {
     console.log(
         `Express started on http://localhost:${app.get(
