@@ -6,8 +6,7 @@ var fs = require('fs');
 var ViewPoint = require('./models/viewPoint');
 var ImgInfo = require('./models/imgInfo');
 var initViewPoint = require('./lib/initViewPoint');
-
-const mineType = require('mime-types');
+var ImgInfoService = require('./imgInfoService');
 
 app.set('port', process.env.PORT || 4321);
 
@@ -205,32 +204,18 @@ app.post('/api/imgInfos/save', (req, res) => {
     }
 });
 
+// 尝试使用async/await
+async function getImgInfoByUrl(url, res) {
+    try {
+        let imgInfo = await ImgInfoService.getByUrl(url);
+        res.send(imgInfo);
+    } catch (err) {
+        res.send(imgInfo);
+    }
+}
+
 app.get('/api/imgInfos/getImgInfo', (req, res) => {
-    ImgInfo.find({ url: req.query.url }, (err, data) => {
-        if (err) {
-            res.send({
-                message: err,
-                code: 500
-            });
-        } else {
-            let imgInfo = {};
-            if (data && data.length > 0) {
-                imgInfo = {
-                    createdTime: data[0].createdTime,
-                    desc: data[0].desc,
-                    id: data[0].id,
-                    title: data[0].title,
-                    url: data[0].url,
-                    viewPointId: data[0].viewPointId
-                };
-            }
-            res.send({
-                message: '获取图片信息成功！',
-                code: 200,
-                imgInfo
-            });
-        }
-    });
+    getImgInfoByUrl(req.query.url, res);
 });
 
 app.listen(app.get('port'), function() {

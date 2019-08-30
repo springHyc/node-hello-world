@@ -1,7 +1,7 @@
 {
-    "name": "meadowlark",
+    "name": "blog",
     "version": "1.0.0",
-    "description": "node && express 学习旅行社网站",
+    "description": "blog服务网站",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
