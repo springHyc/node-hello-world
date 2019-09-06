@@ -9,7 +9,8 @@ const viewPointSchema = mongoose.Schema({
     partner: String,
     isGo: Boolean,
     whenDid: [String],
-    imgIds: [String]
+    imgIds: [String],
+    notes: String
 });
 
 var ViewPoint = mongoose.model('ViewPoint', viewPointSchema);
